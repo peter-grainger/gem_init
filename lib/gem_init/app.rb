@@ -16,7 +16,7 @@ module GemInit
         :email => "YOUR EMAIL",
       },
       :github => {
-        :name => "your_github_user_name"
+        :user => "your_github_user_name"
       }
     }
 
@@ -54,7 +54,8 @@ module GemInit
     end
 
     def github_user
-      @github_user ||= git_config[:github][:user]
+      config = git_config[:github] || DEFAULT_GIT_CONFIG[:github]
+      @github_user ||= config[:user]
     end
 
     private
@@ -76,7 +77,9 @@ module GemInit
           end
         end
         # Be a tad paranoid and make it harder to accidentally reveal this
-        config[:github][:token] = nil
+        if config[:github]
+          config[:github][:token] = nil 
+        end
         config
       rescue Errno::ENOENT
         warn "Could not read your ~/.gitconfig, using silly defaults."
